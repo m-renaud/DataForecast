@@ -1,0 +1,3 @@
+.stack-work
+src/*flymake.hs
+src/Lib/*flymake.hs
