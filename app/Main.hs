@@ -4,4 +4,4 @@ import Protolude
 import Lib
 
 main :: IO ()
-main = someFunc
+main = print ("main" :: Text)
