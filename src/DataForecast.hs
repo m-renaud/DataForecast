@@ -46,12 +46,6 @@ data SPeriod (x :: TsPeriod) where
 deriving instance Show (SPeriod x)
 
 
--- | Type level equality.
-type family (==?) (a :: k) (b :: k) :: Bool where
-    a ==? a = 'True
-    a ==? b = 'False
-
-
 --
 -- TimeSeries
 --
