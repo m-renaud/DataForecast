@@ -57,18 +57,22 @@ data TimeSeries (parts :: [TsPeriod]) where
         -> TimeSeries (p ': subparts)
 deriving instance Show (TimeSeries parts)
 
+
 -- | Get the 'SummaryData' out of a TimeSeries.
 getSD :: TimeSeries parts -> SummaryData
 getSD (TimeSeries _ sd _) = sd
+
 
 -- | Set the 'SummaryData' field of a 'TimeSeries'. We can't use record syntax
 -- because https://ghc.haskell.org/trac/ghc/ticket/2595 is not implemented.
 setSD :: SummaryData -> TimeSeries parts -> TimeSeries parts
 setSD sd (TimeSeries t _sd sub) = TimeSeries t sd sub
 
+
 -- | Get the 'Subparts' out of a 'TimeSeries'.
 getSub :: TimeSeries (p ': subparts) -> Subparts subparts
 getSub (TimeSeries _ _ sub) = sub
+
 
 -- | Set the 'Subparts' of the 'TimeSeries'.
 setSub ::
@@ -76,6 +80,7 @@ setSub ::
     -> TimeSeries (p ': subparts)
     -> TimeSeries (p ': subparts)
 setSub sub (TimeSeries t sd _sub) = TimeSeries t sd sub
+
 
 -- | Construct a leaf 'TimeSeries' with the given 'total'.
 --
@@ -118,6 +123,7 @@ instance BuildTS 'Day where
     build = TimeSeries SDay
 
 
+
 -- | Use promoted constructors to represent the different timeseries that we have.
 -- When using these as kinds you must prefix them with a single quote (').
 --
@@ -130,6 +136,7 @@ data TsPeriod
     | Quarter
     | Month
     | Day
+
 
 
 -- | The singleton for the promoted 'TsPeriod' type.
@@ -146,6 +153,7 @@ data SPeriod (x :: TsPeriod) where
 deriving instance Show (SPeriod x)
 
 
+
 -- | The summarization of the entire time series rooted at the current
 -- 'TimeSeries.
 data SummaryData = SummaryData
@@ -157,26 +165,27 @@ deriving instance Show SummaryData
 instance Default SummaryData where
     def = SummaryData Nothing Nothing
 
+
 -- | The default 'SummaryData' with 'Nothing' for the 'sdtotal' and 'sdmean'.
 defaultSummary :: SummaryData
 defaultSummary = def
+
 
 -- | Construct a 'SummaryData' with the 'sdtotal' set.
 summaryWithTotal :: Double -> SummaryData
 summaryWithTotal total = setSdTotal total defaultSummary
 
+
 -- | Set the total for the 'SummaryData'.
 setSdTotal :: Double -> SummaryData -> SummaryData
 setSdTotal total sd = sd { sdtotal = Just total }
+
 
 -- | Set the mean for the 'SummaryData'.
 setSdMean :: Double -> SummaryData -> SummaryData
 setSdMean mean sd = sd { sdmean = Just mean }
 
 
---
--- Subparts
---
 
 -- | The constituent components of a 'TimeSeries'. If the 'TimeSeries' is just a
 -- leaf with raw data then 'subs' will be 'Nothing'.

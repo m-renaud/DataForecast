@@ -33,6 +33,7 @@ computeTotal tts@TimeSeries{} =
             in
                 setSD newSD (setSub (Subparts newSubparts) tts)
 
+
 -- | Get the total for the given 'TimeSeries' or `0` if it's not computed.
 --
 -- TODO: Consider changing this function to compute the total.
