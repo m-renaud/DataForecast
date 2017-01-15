@@ -1,7 +1,8 @@
+{-# LANGUAGE DataKinds #-}
 module Main where
 
 import Protolude
 import DataForecast
 
 main :: IO ()
-main = print ("main" :: Text)
+main = print (raw 4 :: TimeSeries '[ 'Day ])

@@ -160,5 +160,3 @@ computeTotal tts@TimeSeries{} =
                     setSdTotal subpartTotal (getSD tts)
             in
                 setSD newSD (setSub (Subparts newSubparts) tts)
-
-
