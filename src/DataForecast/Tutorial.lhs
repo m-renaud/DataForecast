@@ -92,10 +92,10 @@ Lets aggregate the totals across our first time series:
 This will update the top level total in the `SummaryData` of our time series by
 summing the totals of the constituent parts.
 
-```haskell
-λ> computeTotal yearByQuarter
-TimeSeries SYear (SummaryData {sdtotal = Just 75.0, ... }) ...
-```
+
+    λ> computeTotal yearByQuarter
+    TimeSeries SYear (SummaryData {sdtotal = Just 75.0, ... }) ...
+
 
 We can do the same thing for our `yearByQuarterByMonth` timeseries. This
 function works for an arbitrarily nested time series.
@@ -135,12 +135,12 @@ But the following will fail to compile:
 
 This will fail to compile with the following warning:
 
-```
-Couldn't match type ‘'Quarter’ with ‘'Year’
-Expected type: TimeSeries '['Year, 'Quarter]
-  Actual type: TimeSeries '['Quarter, 'Month]
-In the second argument of ‘analyze’, namely ‘quarterByMonth’
-```
+
+    Couldn't match type ‘'Quarter’ with ‘'Year’
+    Expected type: TimeSeries '['Year, 'Quarter]
+      Actual type: TimeSeries '['Quarter, 'Month]
+    In the second argument of ‘analyze’, namely ‘quarterByMonth’
+
 
 It very clearly says that it was expecting the second argument to analyze,
 namely `quarterByMonth` to have the type `TimeSeries '[ 'Year, 'Quarter ]` but
