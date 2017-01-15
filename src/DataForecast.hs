@@ -10,14 +10,14 @@
 {-# LANGUAGE GADTSyntax #-}
 {-# LANGUAGE DataKinds #-}
 {-|
-Module      : Lib
-Description : Lib's main module
+Module      : DataForecast
+Description : DataForecast's main module
 
 TODO
 -}
-module Lib where
+module DataForecast where
 
-import Lib.Prelude
+import DataForecast.Prelude
 
 -- | Use promoted constructors to represent the different timeseries that we have.
 -- When using these as kinds you must prefix them with a single quote (').

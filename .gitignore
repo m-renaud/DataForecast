@@ -1,5 +1,5 @@
 .stack-work
 app/*flymake.hs
-src/*\*dataforecasting\**
+src/*\*dataforecast\**
 src/*flymake.hs
 src/Lib/*flymake.hs

@@ -1,7 +1,7 @@
 module Main where
 
 import Protolude
-import Lib
+import DataForecast
 
 main :: IO ()
 main = print ("main" :: Text)
