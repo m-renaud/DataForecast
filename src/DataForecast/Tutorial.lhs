@@ -24,8 +24,30 @@ TypeOperators and DataKinds language extensions.
 Constructing a `TimeSeries`
 ---------------------------
 
-We can construct a `TimeSeries` using the constructor directly and specifying the
-resolution (need a better word for this) for each of the components. In the code below
+We can construct a `TimeSeries` using the constructor directly and specifying
+the resolution (need a better word for this) for each of the components. This is
+not how you should construct them when using the library (we'll get to that
+soon) but it's important to understand the structure of the `TimeSeries` type.
+
+A `TimeSeries` has 3 main components:
+
+  1. The period of time that the data is for. This is expressed using a
+  `TsPeriod` ("time series period") which is something like `Year`, `Quarter`,
+  `Month`, or `Day`. This becomes part of the type of the time series so you
+  can track the _shape_ of your data.
+
+  2. The summary data for the time series. This includes the total of the entire
+  time series and the mean of the constituent pieces.
+
+  3. The subparts of the time series. If you have a year's worth of data at the
+  resolution of a quarter then your top level time series will be for the year
+  and the subparts will be timeseries for the quarter.
+
+Note: The `TsPeriod` type is used a bit differently in different contexts. In
+the constructor below you'll see it used with a prefixed capitol `S` and in
+type signatures you'll see it prefixed with a single quote `'`.
+
+So, without further ado let's build a time series for a year's worth of profits.
 
 > yearByQuarterConstructor :: TimeSeries '[ 'Year, 'Quarter ]
 > yearByQuarterConstructor =
@@ -60,7 +82,8 @@ function:
 > yearByQuarter = fromParts [ raw 10, raw 20, raw 30, raw 15 ]
 
 Much better! The `fromParts` and `raw` utilities allow you to construct a
-`TimeSeries` of any type, you just need to add the type signature.
+`TimeSeries` of any type, you just need to add the type signature to pin down
+the concrete type of your data.
 
 
 *More Complex Time Series*
