@@ -1,6 +1,6 @@
 name:                DataForecast
 version:             0.1.0.0
-synopsis:            Initial project template from stack
+synopsis:            Type-safe data analysis.
 description:         Please see README.md
 homepage:            https://github.com/m-renaud/DataForecast#readme
 license:             BSD3
