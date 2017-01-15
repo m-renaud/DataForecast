@@ -9,3 +9,4 @@ module Lib.Prelude
     ) where
 
 import Protolude as Exports
+import Data.Default as Exports

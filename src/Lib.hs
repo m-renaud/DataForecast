@@ -1,3 +1,5 @@
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE ExistentialQuantification #-}
@@ -11,127 +13,152 @@
 Module      : Lib
 Description : Lib's main module
 
-This is a haddock comment describing your library
-For more information on how to write Haddock comments check the user guide:
-<https://www.haskell.org/haddock/doc/html/index.html>
+TODO
 -}
 module Lib where
 
-
 import Lib.Prelude
 
-
--- Use DataKinds to represent the different timeseries that we have.
-data DecadeTS
-deriving instance Show DecadeTS
-data YearTS
-deriving instance Show YearTS
-data QuarterTS 
-deriving instance Show QuarterTS
-data MonthTS 
-deriving instance Show MonthTS
-data DayTS
-deriving instance Show DayTS
-
-
--- Use a GADT to track the type of the time series so we never make invalid
--- comparisons.
+-- | Use promoted constructors to represent the different timeseries that we have.
+-- When using these as kinds you must prefix them with a single quote (').
 --
--- For example, it is only valid to find the difference between times eries of
--- the same type.
+-- __Example__:
+--   raw 4 :: TimeSeries '[ 'Day ]
+data TsPeriod
+    = Decade
+    | Year
+    | Quarter
+    | Month
+    | Day
+
+
+-- | The singleton for the promoted 'TsPeriod' type.
 --
--- We use a common type because all time series share many operations.
-data TimeSeries (p :: *) (c :: *) where
-    DecadeByYearTS :: TimeSeriesData YearTS -> TimeSeries DecadeTS YearTS
-    YearByQuarterTS :: TimeSeriesData QuarterTS -> TimeSeries YearTS QuarterTS
-    YearByMonthTS :: TimeSeriesData MonthTS -> TimeSeries YearTS MonthTS
-    QuarterByMonthTS :: TimeSeriesData MonthTS -> TimeSeries QuarterTS MonthTS
-    MonthByDayTS :: TimeSeriesData DayTS -> TimeSeries MonthTS DayTS
-    DayValue :: TimeSeriesData () -> TimeSeries DayTS ()
-
-deriving instance (Show p, Show c) => Show (TimeSeries p c)
-
-class GTimeSeries p c where
-    -- | Construct a TimeSeries from the constituent 'TimeSeriesData'.
-    construct :: TimeSeriesData c -> TimeSeries p c
-
-    getData :: TimeSeries p c -> TimeSeriesData c
-
-    getTotal :: TimeSeries p c -> Double
-    getTotal = const 0
-
-fromConstituents :: (Show d, GTimeSeries p c) => [TimeSeries c d] -> TimeSeries p c
-fromConstituents constituents =
-    construct (TimeSeriesData Nothing Nothing (Just constituents))    
-
-    
-instance GTimeSeries YearTS MonthTS where
-    construct = YearByMonthTS
-    getData (YearByMonthTS tsData) = tsData
-
-instance GTimeSeries MonthTS DayTS where
-    construct = MonthByDayTS
-    getData (MonthByDayTS tsData) = tsData
-
-instance GTimeSeries DayTS () where
-    construct = DayValue
-    getData (DayValue tsData) = tsData
+-- See
+-- https://www.schoolofhaskell.com/user/konn/prove-your-haskell-for-great-safety/dependent-types-in-haskell#singleton-patterns
+-- for details.
+data SPeriod (x :: TsPeriod) where
+    SDecade :: SPeriod 'Decade
+    SYear :: SPeriod 'Year
+    SQuarter :: SPeriod 'Quarter
+    SMonth :: SPeriod 'Month
+    SDay :: SPeriod 'Day
+deriving instance Show (SPeriod x)
 
 
--- | Numerical data about a time series.
-data TimeSeriesData c = forall d. Show d => TimeSeriesData
-    { seriesTotal :: Maybe Double  -- ^ The total across the time series.
-    , seriesMean :: Maybe Double  -- ^ The average per constituent time series.
-    , seriesConstituents :: Maybe [TimeSeries c d]
+-- | Type level equality.
+type family (==?) (a :: k) (b :: k) :: Bool where
+    a ==? a = 'True
+    a ==? b = 'False
+
+
+--
+-- TimeSeries
+--
+
+-- | Time series date representation with the resolution breakdown encoded in the
+-- type.
+data TimeSeries (parts :: [TsPeriod]) where
+    TimeSeries ::
+        SPeriod p
+        -> SummaryData
+        -> Subparts subparts
+        -> TimeSeries (p ': subparts)
+deriving instance Show (TimeSeries parts)
+
+-- | Get the 'SummaryData' out of a TimeSeries.
+getSD :: TimeSeries parts -> SummaryData
+getSD (TimeSeries _ sd _) = sd
+
+-- | Set the 'SummaryData' field of a 'TimeSeries'. We can't use record syntax
+-- because https://ghc.haskell.org/trac/ghc/ticket/2595 is not implemented.
+setSD :: SummaryData -> TimeSeries parts -> TimeSeries parts
+setSD sd (TimeSeries t _sd sub) = TimeSeries t sd sub
+
+-- | Get the 'Subparts' out of a TimeSeries.
+getSub :: TimeSeries (p ': subparts) -> Subparts subparts
+getSub (TimeSeries _ _ sub) = sub
+
+setSub ::
+    Subparts subparts
+    -> TimeSeries (p ': subparts)
+    -> TimeSeries (p ': subparts)
+setSub sub (TimeSeries t sd _sub) = TimeSeries t sd sub
+
+
+-- Typeclass for constructing TimeSeries with default data.
+class BuildTS p where
+    build :: SummaryData -> Subparts rest -> TimeSeries (p ': rest)
+
+instance BuildTS 'Year where
+    build = TimeSeries SYear
+instance BuildTS 'Quarter where
+    build = TimeSeries SQuarter
+instance BuildTS 'Month where
+    build = TimeSeries SMonth
+instance BuildTS 'Day where
+    build = TimeSeries SDay
+
+
+data SummaryData = SummaryData
+    { sdtotal :: Maybe Double
+    , sdmean :: Maybe Double
     }
+deriving instance Show SummaryData
 
-deriving instance Show c => Show (TimeSeriesData c)
+instance Default SummaryData where
+    def = SummaryData Nothing Nothing
+
+setSdTotal :: Double -> SummaryData -> SummaryData
+setSdTotal total sd = sd { sdtotal = Just total }
+
+setSdMean :: Double -> SummaryData -> SummaryData
+setSdMean mean sd = sd { sdmean = Just mean }
 
 
-emptyConstTest :: TimeSeriesData MonthTS
-emptyConstTest = TimeSeriesData (Just 100) Nothing (Nothing :: Maybe [TimeSeries MonthTS DayTS])
+--
+-- SubParts
+--
 
-tTotal :: TimeSeries p c -> Double
-tTotal (DecadeByYearTS tsData) = fromMaybe 0 . seriesTotal $ tsData
-tTotal (YearByQuarterTS tsData) = fromMaybe 0 . seriesTotal $ tsData
-tTotal (YearByMonthTS tsData) = fromMaybe 0 . seriesTotal $ tsData
-tTotal (QuarterByMonthTS tsData) = fromMaybe 0 . seriesTotal $ tsData
-tTotal (MonthByDayTS tsData) = fromMaybe 0 . seriesTotal $ tsData
-tTotal (DayValue tsData) = fromMaybe 0 . seriesTotal $ tsData
-    
+data Subparts (parts :: [TsPeriod]) = Subparts
+    { subs :: Maybe [TimeSeries parts]
+    }
+deriving instance Show (Subparts parts)
 
-computeTsTotal :: TimeSeries p c -> TimeSeries p c
-computeTsTotal (DecadeByYearTS tsData) = DecadeByYearTS (computeTotal tsData)
-computeTsTotal (YearByQuarterTS tsData) = YearByQuarterTS (computeTotal tsData)
-computeTsTotal (YearByMonthTS tsData) = YearByMonthTS (computeTotal tsData)
-computeTsTotal (QuarterByMonthTS tsData) = QuarterByMonthTS (computeTotal tsData)
-computeTsTotal (MonthByDayTS tsData) = MonthByDayTS (computeTotal tsData)
-computeTsTotal (DayValue tsData) = DayValue (computeTotal tsData)
+instance Default (Subparts '[]) where
+    def = Subparts Nothing
 
-computeTotal :: TimeSeriesData c -> TimeSeriesData c
-computeTotal tseriesData@TimeSeriesData{seriesTotal, seriesMean, seriesConstituents} =
-    case seriesTotal of
+
+fromParts :: (BuildTS part)
+    => [TimeSeries subparts]
+    -> TimeSeries (part ': subparts)
+fromParts subseries = build def (Subparts (Just subseries))
+
+raw :: BuildTS p => Double -> TimeSeries '[p]
+raw t = build (SummaryData (Just t) Nothing) def
+
+
+-- COMPUTE TOTAL
+
+getTotalOrZero :: TimeSeries parts -> Double
+getTotalOrZero = fromMaybe 0 . sdtotal . getSD
+
+computeTotal :: TimeSeries parts -> TimeSeries parts
+computeTotal tts@TimeSeries{} =
+    case sdtotal . getSD $ tts of
         Just _total ->
-            tseriesData
+            tts
         Nothing ->
-            case seriesConstituents of
-                Just constituents ->
-                    let
-                        updatedConstituents = map computeTsTotal constituents
-                        total = sum . map tTotal $ updatedConstituents
-                    in
-                        TimeSeriesData{ seriesConstituents = Just updatedConstituents
-                                   , seriesTotal = Just total
-                                   , seriesMean
-                                   }
-                Nothing ->
-                    tseriesData
+            let
+                subparts =
+                    subs . getSub $ tts
+                newSubparts =
+                    fmap (map computeTotal) subparts
+                subpartTotal =
+                    fromMaybe 0 . fmap (sum . map getTotalOrZero) $ newSubparts
+                newSD =
+                    setSdTotal subpartTotal (getSD tts)
+            in
+                setSD newSD (setSub (Subparts newSubparts) tts)
 
-numMean :: (Fractional a) => [a] -> a
-numMean nums =
-    let
-        numsLength = length nums
-        numsSum = sum nums
-    in
-        numsSum / (fromIntegral numsLength)
 
