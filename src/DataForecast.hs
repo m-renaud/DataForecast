@@ -100,6 +100,10 @@ instance BuildTS 'Day where
     build = TimeSeries SDay
 
 
+--
+-- SummaryData
+--
+
 data SummaryData = SummaryData
     { sdtotal :: Maybe Double
     , sdmean :: Maybe Double
@@ -108,6 +112,12 @@ deriving instance Show SummaryData
 
 instance Default SummaryData where
     def = SummaryData Nothing Nothing
+
+defaultSummary :: SummaryData
+defaultSummary = def
+
+summaryWithTotal :: Double -> SummaryData
+summaryWithTotal total = setSdTotal total defaultSummary
 
 setSdTotal :: Double -> SummaryData -> SummaryData
 setSdTotal total sd = sd { sdtotal = Just total }
