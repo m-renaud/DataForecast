@@ -1,12 +1,14 @@
-{-
-Welcome to your custom Prelude
-Export here everything that should always be in your library scope
-For more info on what is exported by Protolude check:
-https://github.com/sdiehl/protolude/blob/master/Symbols.md
+{-|
+Module      : DataForecast.Prelude
+Description : Custom prelude for DataForecast library based on Protolude.
+
+For more information on Protolude see
+https://github.com/sdiehl/protolude/blob/master/Symbols.md.
 -}
 module DataForecast.Prelude
-    ( module Exports
+    ( module Protolude
+    , module Data.Default
     ) where
 
-import Protolude as Exports
-import Data.Default as Exports
+import Protolude
+import Data.Default

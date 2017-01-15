@@ -5,7 +5,10 @@ Description : DataForecast's main module
 Top level module for DataForcest. Simply re-exports functionality from sub-modules.
 -}
 module DataForecast
-    ( module DataForecast.TimeSeries
+    ( -- * Time series analysis.
+      -- ** Data definitions and utility functions.
+      module DataForecast.TimeSeries
+      -- ** Aggregation across time series.
     , module DataForecast.TimeSeries.Aggregate
     ) where
 
