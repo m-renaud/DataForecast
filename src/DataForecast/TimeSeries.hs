@@ -55,6 +55,7 @@ data TimeSeries (parts :: [TsPeriod]) where
         -> SummaryData
         -> Subparts subparts
         -> TimeSeries (p ': subparts)
+deriving instance Eq (TimeSeries parts)
 deriving instance Show (TimeSeries parts)
 
 
@@ -136,7 +137,7 @@ data TsPeriod
     | Quarter
     | Month
     | Day
-
+    deriving (Eq, Show)
 
 
 -- | The singleton for the promoted 'TsPeriod' type.
@@ -150,6 +151,7 @@ data SPeriod (x :: TsPeriod) where
     SQuarter :: SPeriod 'Quarter
     SMonth :: SPeriod 'Month
     SDay :: SPeriod 'Day
+deriving instance Eq (SPeriod x)
 deriving instance Show (SPeriod x)
 
 
@@ -160,6 +162,7 @@ data SummaryData = SummaryData
     { sdtotal :: Maybe Double
     , sdmean :: Maybe Double
     }
+deriving instance Eq SummaryData
 deriving instance Show SummaryData
 
 instance Default SummaryData where
@@ -192,6 +195,7 @@ setSdMean mean sd = sd { sdmean = Just mean }
 data Subparts (parts :: [TsPeriod]) = Subparts
     { subs :: Maybe [TimeSeries parts]
     }
+deriving instance Eq (Subparts parts)
 deriving instance Show (Subparts parts)
 
 instance Default (Subparts '[]) where
