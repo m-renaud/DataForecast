@@ -1,5 +1,7 @@
 # DataForecast
 
+[![Build Status](https://travis-ci.org/m-renaud/DataForecast.svg?branch=master)](https://travis-ci.org/m-renaud/DataForecast)
+
 Stability: Extremely Experimental
 
 This library provides utilities for performing timeseries analysis with type
