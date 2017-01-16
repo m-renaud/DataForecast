@@ -39,7 +39,7 @@ fromPartsSpec =
              `shouldBe` defaultSummary
         it "has empty subpartrs" $
             (getSub $ (fromParts [] :: TimeSeries '[ 'Year, 'Quarter ]))
-            `shouldBe` Subparts (Just [])
+            `shouldBe` Subparts []
     context "with non-empty subparts list" $ do
         it "has 'defaultSummary' data" $
             (getSD $
@@ -48,7 +48,7 @@ fromPartsSpec =
         it "has same subparts as list argument" $
             (getSub $
              (fromParts [raw 10, raw 20] :: TimeSeries '[ 'Year, 'Quarter ]))
-            `shouldBe` Subparts (Just [raw 10, raw 20])
+            `shouldBe` Subparts [raw 10, raw 20]
 
 
 defaultSummarySpec :: Spec

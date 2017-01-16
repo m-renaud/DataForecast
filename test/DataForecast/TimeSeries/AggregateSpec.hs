@@ -53,12 +53,12 @@ computeTotalMultiLevelSpec =
                               ]
                 totaledTimeSeries = computeTotal timeSeries
             (sdtotal . getSD $ totaledTimeSeries) `shouldBe` Just 33
-            (join . fmap (sdtotal . getSD) . nthSubpart 0 $ totaledTimeSeries)
+            (sdtotal . getSD . nthSubpart 0 $ totaledTimeSeries)
              `shouldBe` Just 3
-            (join . fmap (sdtotal . getSD) . nthSubpart 1 $ totaledTimeSeries)
+            (sdtotal . getSD . nthSubpart 1 $ totaledTimeSeries)
              `shouldBe` Just 30
 
 
-nthSubpart :: Int -> TimeSeries (p ': rest) -> Maybe (TimeSeries rest)
-nthSubpart n = fmap (!! n) . subs . getSub
+nthSubpart :: Int -> TimeSeries (p ': rest) -> (TimeSeries rest)
+nthSubpart n = (!! n) . subs . getSub
     

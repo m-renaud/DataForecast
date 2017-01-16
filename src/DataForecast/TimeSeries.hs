@@ -101,7 +101,7 @@ raw total = build (SummaryData (Just total) Nothing) def
 fromParts :: BuildTS part
     => [TimeSeries subparts]
     -> TimeSeries (part ': subparts)
-fromParts subseries = build def (Subparts (Just subseries))
+fromParts subseries = build def (Subparts subseries)
 
 
 
@@ -193,10 +193,10 @@ setSdMean mean sd = sd { sdmean = Just mean }
 -- | The constituent components of a 'TimeSeries'. If the 'TimeSeries' is just a
 -- leaf with raw data then 'subs' will be 'Nothing'.
 data Subparts (parts :: [TsPeriod]) = Subparts
-    { subs :: Maybe [TimeSeries parts]
+    { subs :: [TimeSeries parts]
     }
 deriving instance Eq (Subparts parts)
 deriving instance Show (Subparts parts)
 
 instance Default (Subparts '[]) where
-    def = Subparts Nothing
+    def = Subparts []

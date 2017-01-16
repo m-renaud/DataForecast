@@ -25,9 +25,9 @@ computeTotal tts@TimeSeries{} =
                 subparts =
                     subs . getSub $ tts
                 newSubparts =
-                    fmap (map computeTotal) subparts
+                    map computeTotal subparts
                 subpartTotal =
-                    fromMaybe 0 . fmap (sum . map getTotalOrZero) $ newSubparts
+                    sum . map getTotalOrZero $ newSubparts
                 newSD =
                     setSdTotal subpartTotal (getSD tts)
             in

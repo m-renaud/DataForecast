@@ -55,11 +55,11 @@ So, without further ado let's build a time series for a year's worth of profits.
 yearByQuarterConstructor :: TimeSeries '[ 'Year, 'Quarter ]
 yearByQuarterConstructor =
     TimeSeries SYear defaultSummary
-        (Subparts . Just $ [ TimeSeries SQuarter (summaryWithTotal 10) (Subparts Nothing)
-                           , TimeSeries SQuarter (summaryWithTotal 20) (Subparts Nothing)
-                           , TimeSeries SQuarter (summaryWithTotal 30) (Subparts Nothing)
-                           , TimeSeries SQuarter (summaryWithTotal 15) (Subparts Nothing)
-                           ])
+        (Subparts [ TimeSeries SQuarter (summaryWithTotal 10) (Subparts [])
+                  , TimeSeries SQuarter (summaryWithTotal 20) (Subparts [])
+                  , TimeSeries SQuarter (summaryWithTotal 30) (Subparts [])
+                  , TimeSeries SQuarter (summaryWithTotal 15) (Subparts [])
+                  ])
 \end{code}
 
 As you can imagine this would get very tedious, especially when you just want to
@@ -70,11 +70,11 @@ function so the above can be replaced with:
 yearByQuarterRaw :: TimeSeries '[ 'Year, 'Quarter ]
 yearByQuarterRaw =
     TimeSeries SYear defaultSummary
-        (Subparts . Just $ [ raw 10
-                           , raw 20
-                           , raw 30
-                           , raw 15
-                           ])
+        (Subparts [ raw 10
+                  , raw 20
+                  , raw 30
+                  , raw 15
+                  ])
 \end{code}
 
 
