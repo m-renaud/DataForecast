@@ -42,7 +42,9 @@ test-suite DataForecast-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
-  other-modules:       DataForecast.TimeSeriesSpec, DataForecast.TutorialSpec
+  other-modules:       DataForecast.TimeSeriesSpec
+                     , DataForecast.TimeSeries.AggregateSpec
+                     , DataForecast.TutorialSpec
   build-depends:       base
                      , DataForecast
                      , data-default
