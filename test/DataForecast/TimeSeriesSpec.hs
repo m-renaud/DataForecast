@@ -26,8 +26,8 @@ rawSpec =
     describe "when 'raw' constructor used" $ do
     it "summary data total is equal to 'raw' argument" $
         (sdtotal . getSD $ rawDay 10) `shouldBe` Just 10
-    it "summary data mean is 'Nothing'" $
-        (sdmean . getSD $ rawDay 10) `shouldBe` Nothing
+    it "summary data mean is equal to 'raw' argument" $
+        (sdmean . getSD $ rawDay 10) `shouldBe` Just 10
 
 
 fromPartsSpec :: Spec

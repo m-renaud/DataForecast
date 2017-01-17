@@ -83,13 +83,13 @@ setSub ::
 setSub sub (TimeSeries t sd _sub) = TimeSeries t sd sub
 
 
--- | Construct a leaf 'TimeSeries' with the given 'total'.
+-- | Construct a leaf 'TimeSeries' with the given 'rawData'.
 --
 -- __Example__:
 --
 --   > raw 42 :: TimeSeries '[ 'Year ]
 raw :: BuildTS p => Double -> TimeSeries '[p]
-raw total = build (SummaryData (Just total) Nothing) def
+raw rawData = build (SummaryData (Just rawData) (Just rawData)) def
 
 
 -- | Construct a 'TimeSeries' given the constituent 'TimeSeries' parts.

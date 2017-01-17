@@ -24,10 +24,10 @@ computeTotalSpec = do
                 (sdtotal . getSD . computeTotal $
                  (raw 10 :: TimeSeries '[ 'Year ]))
                 `shouldBe` Just 10
-            it "does not set summary data mean" $
+            it "does not change summary data mean" $
                 (sdmean . getSD . computeTotal $
                  (raw 10 :: TimeSeries '[ 'Year ]))
-                `shouldBe` Nothing
+                `shouldBe` Just 10
 
         context "on two level timeseries" $ do
             it "sets summary data total" $

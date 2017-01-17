@@ -55,10 +55,18 @@ So, without further ado let's build a time series for a year's worth of profits.
 yearByQuarterConstructor :: TimeSeries '[ 'Year, 'Quarter ]
 yearByQuarterConstructor =
     TimeSeries SYear defaultSummary
-        (Subparts [ TimeSeries SQuarter (summaryWithTotal 10) (Subparts [])
-                  , TimeSeries SQuarter (summaryWithTotal 20) (Subparts [])
-                  , TimeSeries SQuarter (summaryWithTotal 30) (Subparts [])
-                  , TimeSeries SQuarter (summaryWithTotal 15) (Subparts [])
+        (Subparts [ TimeSeries SQuarter
+                    (setSdTotal 10 . setSdMean 10 $ defaultSummary)
+                    (Subparts [])
+                  , TimeSeries SQuarter
+                    (setSdTotal 20 . setSdMean 20 $ defaultSummary)
+                    (Subparts [])
+                  , TimeSeries SQuarter
+                    (setSdTotal 30 . setSdMean 30 $ defaultSummary)
+                    (Subparts [])
+                  , TimeSeries SQuarter
+                    (setSdTotal 15 . setSdMean 15 $ defaultSummary)
+                    (Subparts [])
                   ])
 \end{code}
 
