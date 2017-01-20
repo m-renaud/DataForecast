@@ -5,6 +5,7 @@ module DataForecast.TimeSeries.AggregateSpec (spec) where
 import Prelude ((!!))
 import Protolude
 import Test.Hspec
+import Test.QuickCheck
 
 import DataForecast.TimeSeries
 import DataForecast.TimeSeries.Aggregate
@@ -22,24 +23,29 @@ computeTotalSpec = do
 
         context "on raw timeseries" $ do
             it "does not change summary data total" $
-                (sdtotal . getSD . computeTotal $
-                 (raw 10 :: TimeSeries '[ 'Year ]))
-                `shouldBe` Just 10
+                property $ \x ->
+                    (sdtotal . getSD . computeTotal $
+                        (raw x :: TimeSeries '[ 'Year ]))
+                    `shouldBe` Just x
             it "does not change summary data mean" $
-                (sdmean . getSD . computeTotal $
-                 (raw 10 :: TimeSeries '[ 'Year ]))
-                `shouldBe` Just 10
+                property $ \x ->
+                    (sdmean . getSD . computeTotal $
+                        (raw x :: TimeSeries '[ 'Year ]))
+                    `shouldBe` Just x
 
         context "on two level timeseries" $ do
             it "sets summary data total" $
-                (sdtotal . getSD . computeTotal $
-                 (fromParts [raw 10, raw 20]
-                  :: TimeSeries '[ 'Year, 'Quarter ]))
-                 `shouldBe` Just 30
+                property $ \xs ->
+                    (sdtotal . getSD . computeTotal $
+                        (fromParts (map raw xs)
+                         :: TimeSeries '[ 'Year, 'Quarter ]))
+                    `shouldBe` Just (sum xs)
             it "does not set summary data mean" $
-                (sdmean . getSD . computeTotal $
-                 (fromParts [raw 10, raw 20] :: TimeSeries '[ 'Year, 'Quarter ]))
-                `shouldBe` Nothing
+                property $ \xs ->
+                    (sdmean . getSD . computeTotal $
+                        (fromParts (map raw xs)
+                         :: TimeSeries '[ 'Year, 'Quarter ]))
+                    `shouldBe`  Nothing
         computeTotalMultiLevelSpec
 
 
@@ -47,17 +53,17 @@ computeTotalMultiLevelSpec :: Spec
 computeTotalMultiLevelSpec =
     context "on multi-level timeseries" $ do
         it "sets summary data total on all sub-components" $ do
-            let timeSeries :: TimeSeries '[ 'Year, 'Quarter, 'Month ]
-                timeSeries =
-                    fromParts [ fromParts [ raw 1, raw 2 ]
-                              , fromParts [ raw 10, raw 20 ]
-                              ]
-                totaledTimeSeries = computeTotal timeSeries
-            (sdtotal . getSD $ totaledTimeSeries) `shouldBe` Just 33
-            (sdtotal . getSD . nthSubpart 0 $ totaledTimeSeries)
-             `shouldBe` Just 3
-            (sdtotal . getSD . nthSubpart 1 $ totaledTimeSeries)
-             `shouldBe` Just 30
+            property $ \(xs, ys) ->
+                let timeSeries :: TimeSeries '[ 'Year, 'Quarter, 'Month ]
+                    timeSeries =
+                        fromParts [ fromParts $ map raw xs
+                                  , fromParts $ map raw ys
+                                  ]
+                    totaledTimeSeries = computeTotal timeSeries
+                in
+                    (sdtotal . getSD $ totaledTimeSeries)
+                    `shouldBe` Just (sum xs + sum ys)
+
 
 
 computeMeanSpec :: Spec
@@ -66,13 +72,15 @@ computeMeanSpec = do
 
         context "on raw timeseries" $ do
             it "does not change summary data mean" $
-                (sdmean . getSD . computeMean $
-                (raw 10 :: TimeSeries '[ 'Year ]))
-                `shouldBe` Just 10
+                property $ \x ->
+                    (sdmean . getSD . computeMean $
+                    (raw x :: TimeSeries '[ 'Year ]))
+                    `shouldBe` Just x
             it "does not change summary data total" $
-                (sdtotal . getSD . computeMean $
-                (raw 10 :: TimeSeries '[ 'Year ]))
-                `shouldBe` Just 10
+                property $ \x ->
+                    (sdtotal . getSD . computeMean $
+                    (raw x :: TimeSeries '[ 'Year ]))
+                    `shouldBe` Just x
 
         context "on two level timeseries" $ do
             it "sets summary data mean" $

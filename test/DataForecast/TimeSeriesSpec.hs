@@ -3,6 +3,7 @@ module DataForecast.TimeSeriesSpec (spec) where
 
 import Protolude
 import Test.Hspec
+import Test.QuickCheck
 
 import DataForecast.TimeSeries
 
@@ -25,9 +26,9 @@ rawSpec :: Spec
 rawSpec =
     describe "when 'raw' constructor used" $ do
     it "summary data total is equal to 'raw' argument" $
-        (sdtotal . getSD $ rawDay 10) `shouldBe` Just 10
+        property $ \x -> (sdtotal . getSD $ rawDay x) `shouldBe` Just x
     it "summary data mean is equal to 'raw' argument" $
-        (sdmean . getSD $ rawDay 10) `shouldBe` Just 10
+        property $ \x -> (sdmean . getSD $ rawDay x) `shouldBe` Just x
 
 
 fromPartsSpec :: Spec
@@ -64,7 +65,7 @@ summaryWithTotalSpec :: Spec
 summaryWithTotalSpec =
     describe "when 'summaryWithTotal' constructor used" $ do
     it "summary data total is set" $
-        sdtotal (summaryWithTotal 10) `shouldBe` Just 10
+        property $ \x -> sdtotal (summaryWithTotal x) `shouldBe` Just x
     it "summary data mean is not set" $
         sdmean (summaryWithTotal 10) `shouldBe` Nothing
 
@@ -74,7 +75,8 @@ setSdTotalSpec =
     describe "when setSdTotal called" $ do
     context "on default 'SummaryData'" $ do
         it "sdtotal is Just" $
-            sdtotal (setSdTotal 10 defaultSummary) `shouldBe` Just 10
+            property $ \x -> sdtotal (setSdTotal x defaultSummary)
+            `shouldBe` Just x
         it  "sdmean is still Nothing" $
             sdmean (setSdTotal 10 defaultSummary) `shouldBe` Nothing
     context "on 'SummaryData' with total set" $ do
@@ -91,6 +93,7 @@ setSdMeanSpec =
     describe "when setSdMean called" $ do
     context "on default 'SummaryData'" $ do
         it "sdmean is Just" $
-            sdmean (setSdMean 10 defaultSummary) `shouldBe` Just 10
+            property $ \x -> sdmean (setSdMean x defaultSummary)
+            `shouldBe` Just x
         it  "sdtotal is still Nothing" $
             sdtotal (setSdMean 10 defaultSummary) `shouldBe` Nothing
