@@ -20,7 +20,6 @@ library
                      , DataForecast.Tutorial
                      , DataForecast.TimeSeries
                      , DataForecast.TimeSeries.Aggregate
-                     , DataForecast.TimeSeries.Analysis
                      , DataForecast.TimeSeries.Internal
   other-modules:       DataForecast.Prelude
   build-depends:       base >= 4.7 && < 5
@@ -46,7 +45,6 @@ test-suite DataForecast-test
   main-is:             Spec.hs
   other-modules:       DataForecast.TimeSeriesSpec
                      , DataForecast.TimeSeries.AggregateSpec
-                     , DataForecast.TimeSeries.AnalysisSpec
                      , DataForecast.TutorialSpec
   build-depends:       base
                      , DataForecast
