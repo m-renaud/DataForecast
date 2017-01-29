@@ -120,6 +120,8 @@ instance BuildTS 'Quarter where
     build = TimeSeries SQuarter
 instance BuildTS 'Month where
     build = TimeSeries SMonth
+instance BuildTS 'Week where
+    build = TimeSeries SWeek
 instance BuildTS 'Day where
     build = TimeSeries SDay
 
@@ -136,6 +138,7 @@ data TsPeriod
     | Year
     | Quarter
     | Month
+    | Week
     | Day
     deriving (Eq, Show)
 
@@ -150,6 +153,7 @@ data SPeriod (x :: TsPeriod) where
     SYear :: SPeriod 'Year
     SQuarter :: SPeriod 'Quarter
     SMonth :: SPeriod 'Month
+    SWeek :: SPeriod 'Week
     SDay :: SPeriod 'Day
 deriving instance Eq (SPeriod x)
 deriving instance Show (SPeriod x)
