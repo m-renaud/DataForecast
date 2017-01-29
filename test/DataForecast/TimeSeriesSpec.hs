@@ -10,6 +10,7 @@ import DataForecast.TimeSeries
 spec :: Spec
 spec = do
     rawSpec
+    fromRawDataSpec
     fromPartsSpec
     defaultSummarySpec
     summaryWithTotalSpec
@@ -31,6 +32,31 @@ rawSpec =
         property $ \x -> (sdmean . getSD $ rawDay x) `shouldBe` Just x
 
 
+fromRawDataSpec :: Spec
+fromRawDataSpec =
+    describe "when 'fromRawData' constructor used" $ do
+    it "is equal to 'fromParts' with 'raw'" $
+        property $ \rawData ->
+                       (fromRawData rawData :: TimeSeries '[ 'Year, 'Quarter ])
+                       `shouldBe` fromParts (map raw rawData)
+    context "with empty raw data list" $ do
+        it "has 'defaultSummary' data" $
+            (getSD $ (fromRawData [] :: TimeSeries '[ 'Year, 'Quarter ]))
+             `shouldBe` defaultSummary
+        it "has empty subparts" $
+            (getSub $ (fromRawData [] :: TimeSeries '[ 'Year, 'Quarter ]))
+            `shouldBe` Subparts []
+    context "with non-empty raw data list" $ do
+        it "has 'defaultSummary' data" $
+            (getSD $
+             (fromRawData [10, 20] :: TimeSeries '[ 'Year, 'Quarter ]))
+            `shouldBe` defaultSummary
+        it "has same subparts as list argument" $
+            (getSub $
+             (fromRawData [10, 20] :: TimeSeries '[ 'Year, 'Quarter ]))
+            `shouldBe` Subparts [raw 10, raw 20]
+
+
 fromPartsSpec :: Spec
 fromPartsSpec =
     describe "when 'fromParts' constructor used" $ do
@@ -38,7 +64,7 @@ fromPartsSpec =
         it "has 'defaultSummary' data" $
             (getSD $ (fromParts [] :: TimeSeries '[ 'Year, 'Quarter ]))
              `shouldBe` defaultSummary
-        it "has empty subpartrs" $
+        it "has empty subparts" $
             (getSub $ (fromParts [] :: TimeSeries '[ 'Year, 'Quarter ]))
             `shouldBe` Subparts []
     context "with non-empty subparts list" $ do

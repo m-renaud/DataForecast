@@ -19,8 +19,9 @@ module DataForecast.TimeSeries
     -- ** Construction.
     , BuildTS(..)
     , raw
+    , fromRawData
     , fromParts
-    
+
     -- * TsPeriod
     , TsPeriod(..)
     , SPeriod(..)
@@ -84,6 +85,8 @@ setSub sub (TimeSeries t sd _sub) = TimeSeries t sd sub
 
 
 -- | Construct a leaf 'TimeSeries' with the given 'rawData'.
+-- Usually you should not need to use this directly and can instead use
+-- 'fromRawData'.
 --
 -- __Example__:
 --
@@ -92,12 +95,16 @@ raw :: BuildTS p => Double -> TimeSeries '[p]
 raw rawData = build (SummaryData (Just rawData) (Just rawData)) def
 
 
--- | Construct a 'TimeSeries' given the constituent 'TimeSeries' parts.
+-- | Construct a 'TimeSeries' given the constituent raw data.
 --
 -- __Example__:
 --
 --   > yearByQuarter :: TimeSeries '[ 'Year, 'Quarter ]
---   > yearByQuarter = fromParts [ raw 10, raw 20, raw 30, raw 15 ]
+--   > yearByQuarter = fromRawData [ 10, 20, 30, 15 ]
+fromRawData :: (BuildTS p, BuildTS parts) => [Double] -> TimeSeries '[p, parts]
+fromRawData = fromParts . fmap raw
+
+-- | Construct a 'TimeSeries' given the constituent 'TimeSeries' parts.
 fromParts :: BuildTS part
     => [TimeSeries subparts]
     -> TimeSeries (part ': subparts)
