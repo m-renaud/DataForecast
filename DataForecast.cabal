@@ -20,6 +20,7 @@ library
                      , DataForecast.Tutorial
                      , DataForecast.TimeSeries
                      , DataForecast.TimeSeries.Aggregate
+                     , DataForecast.TimeSeries.Analysis
                      , DataForecast.TimeSeries.Internal
   other-modules:       DataForecast.Prelude
   build-depends:       base >= 4.7 && < 5
