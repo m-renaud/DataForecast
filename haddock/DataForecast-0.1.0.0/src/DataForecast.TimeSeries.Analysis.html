@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE DataKinds #-}</span><span>
+</span><a name="line-2"></a><span class="hs-pragma">{-# LANGUAGE TypeOperators #-}</span><span>
+</span><a name="line-3"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">DataForecast</span><span class="hs-operator">.</span><span class="hs-identifier">TimeSeries</span><span class="hs-operator">.</span><span class="hs-identifier">Analysis</span><span>
+</span><a name="line-4"></a><span>    </span><span class="hs-special">(</span><span> </span><a href="DataForecast.TimeSeries.Analysis.html#mean"><span class="hs-identifier hs-var">mean</span></a><span>
+</span><a name="line-5"></a><span>    </span><span class="hs-special">,</span><span> </span><a href="DataForecast.TimeSeries.Analysis.html#std"><span class="hs-identifier hs-var">std</span></a><span>
+</span><a name="line-6"></a><span>    </span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-7"></a><span>
+</span><a name="line-8"></a><span class="hs-keyword">import</span><span> </span><a href="DataForecast.Prelude.html"><span class="hs-identifier">DataForecast</span><span class="hs-operator">.</span><span class="hs-identifier">Prelude</span></a><span>
+</span><a name="line-9"></a><span class="hs-keyword">import</span><span> </span><a href="DataForecast.TimeSeries.html"><span class="hs-identifier">DataForecast</span><span class="hs-operator">.</span><span class="hs-identifier">TimeSeries</span></a><span>
+</span><a name="line-10"></a><span class="hs-keyword">import</span><span> </span><a href="DataForecast.TimeSeries.Aggregate.html"><span class="hs-identifier">DataForecast</span><span class="hs-operator">.</span><span class="hs-identifier">TimeSeries</span><span class="hs-operator">.</span><span class="hs-identifier">Aggregate</span></a><span>
+</span><a name="line-11"></a><span>
+</span><a name="line-12"></a><span>
+</span><a name="line-13"></a><span class="hs-comment">-- | Return the mean of the timeseries.</span><span>
+</span><a name="line-14"></a><span class="hs-comment">--</span><span>
+</span><a name="line-15"></a><span class="hs-comment">-- It is possible for 'mean' to be undefined and return 'Nothing' if given an</span><span>
+</span><a name="line-16"></a><span class="hs-comment">-- empty 'TimeSeries'. If that's the case the caller can determine what a</span><span>
+</span><a name="line-17"></a><span class="hs-comment">-- reasonable fallback is.</span><span>
+</span><a name="line-18"></a><span class="hs-identifier">mean</span><span> </span><span class="hs-glyph">::</span><span> </span><a href="DataForecast.TimeSeries.html#TimeSeries"><span class="hs-identifier hs-type">TimeSeries</span></a><span> </span><span class="hs-special">(</span><a href="#local-1627431197"><span class="hs-identifier hs-type">p</span></a><span> </span><span class="hs-char">': rest) -&gt; Maybe Double
+mean = sdmean . getSD . computeMean
+
+
+-- | Compute the standard deviation for the time series across the top
+-- dimension.
+--
+-- Note:
+std :: TimeSeries (p ': rest) -&gt; Maybe Double
+std ts =
+    let
+        subpartTotals = catMaybes . map (sdtotal . getSD) . subs . getSub $ ts
+        mMeans = repeat &lt;$&gt; mean ts
+        mDistances = zipWith (-) subpartTotals &lt;$&gt; mMeans
+        n = length . subs . getSub $ ts
+    in
+        case mDistances of
+            Just distances -&gt;
+                let x = (sum . map (^(2 :: Integer)) $ distances)
+                        / fromIntegral n
+                in
+                    Just $ sqrt x
+            Nothing -&gt;
+                Nothing
+</span></pre></body></html>

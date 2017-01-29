@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE Safe #-}</span><span>
+</span><a name="line-2"></a><span class="hs-pragma">{-# LANGUAGE NoImplicitPrelude #-}</span><span>
+</span><a name="line-3"></a><span>
+</span><a name="line-4"></a><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Semiring</span><span> </span><span class="hs-special">(</span><span>
+</span><a name="line-5"></a><span>  </span><a href="Semiring.html#Semiring"><span class="hs-identifier hs-type">Semiring</span></a><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span>
+</span><a name="line-6"></a><span>  </span><a href="Semiring.html#zero"><span class="hs-identifier hs-var">zero</span></a><span class="hs-special">,</span><span>
+</span><a name="line-7"></a><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-8"></a><span>
+</span><a name="line-9"></a><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">Data</span><span class="hs-operator">.</span><span class="hs-identifier">Monoid</span><span>
+</span><a name="line-10"></a><span>
+</span><a name="line-11"></a><span class="hs-comment">-- | Alias for 'mempty'</span><span>
+</span><a name="line-12"></a><span class="hs-identifier">zero</span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Monoid</span><span> </span><a href="#local-1627409986"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a href="#local-1627409986"><span class="hs-identifier hs-type">m</span></a><span>
+</span><a name="line-13"></a><a name="zero"><a href="Semiring.html#zero"><span class="hs-identifier">zero</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">mempty</span><span>
+</span><a name="line-14"></a><span>
+</span><a name="line-15"></a><span class="hs-keyword">class</span><span> </span><span class="hs-identifier hs-type">Monoid</span><span> </span><a href="#local-1627409985"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">=&gt;</span><span> </span><a name="Semiring"><a href="Semiring.html#Semiring"><span class="hs-identifier">Semiring</span></a></a><span> </span><a name="local-1627409985"><a href="#local-1627409985"><span class="hs-identifier">m</span></a></a><span> </span><span class="hs-keyword">where</span><span>
+</span><a name="line-16"></a><span>  </span><span class="hs-pragma">{-# MINIMAL one, (&lt;.&gt;) #-}</span><span>
+</span><a name="line-17"></a><span>
+</span><a name="line-18"></a><span>  </span><span class="hs-identifier">one</span><span> </span><span class="hs-glyph">::</span><span> </span><a href="#local-1627409985"><span class="hs-identifier hs-type">m</span></a><span>
+</span><a name="line-19"></a><span>  </span><span class="hs-special">(</span><span class="hs-operator">&lt;.&gt;</span><span class="hs-special">)</span><span> </span><span class="hs-glyph">::</span><span> </span><a href="#local-1627409985"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="#local-1627409985"><span class="hs-identifier hs-type">m</span></a><span> </span><span class="hs-glyph">-&gt;</span><span> </span><a href="#local-1627409985"><span class="hs-identifier hs-type">m</span></a><span>
+</span><a name="line-20"></a></pre></body></html>
