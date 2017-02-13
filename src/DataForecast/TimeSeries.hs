@@ -121,6 +121,8 @@ fromParts subseries = build def (Subparts subseries)
 class BuildTS p where
     build :: SummaryData -> Subparts rest -> TimeSeries (p ': rest)
 
+instance BuildTS 'Repeated where
+    build = TimeSeries SRepeated
 instance BuildTS 'Decade where
     build = TimeSeries SDecade
 instance BuildTS 'Year where
@@ -143,7 +145,8 @@ instance BuildTS 'Day where
 --
 --   > raw 4 :: TimeSeries '[ 'Day ]
 data TsPeriod
-    = Decade
+    = Repeated
+    | Decade
     | Year
     | Quarter
     | Month
@@ -158,6 +161,7 @@ data TsPeriod
 -- https://www.schoolofhaskell.com/user/konn/prove-your-haskell-for-great-safety/dependent-types-in-haskell#singleton-patterns
 -- for details.
 data SPeriod (x :: TsPeriod) where
+    SRepeated :: SPeriod 'Repeated
     SDecade :: SPeriod 'Decade
     SYear :: SPeriod 'Year
     SQuarter :: SPeriod 'Quarter
