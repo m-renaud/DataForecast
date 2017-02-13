@@ -121,6 +121,8 @@ fromParts subseries = build def (Subparts subseries)
 class BuildTS p where
     build :: SummaryData -> Subparts rest -> TimeSeries (p ': rest)
 
+instance BuildTS 'Decade where
+    build = TimeSeries SDecade
 instance BuildTS 'Year where
     build = TimeSeries SYear
 instance BuildTS 'Quarter where
