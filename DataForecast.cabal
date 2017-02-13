@@ -46,6 +46,7 @@ test-suite DataForecast-test
   main-is:             Spec.hs
   other-modules:       DataForecast.TimeSeriesSpec
                      , DataForecast.TimeSeries.AggregateSpec
+                     , DataForecast.TimeSeries.AnalysisSpec
                      , DataForecast.TutorialSpec
   build-depends:       base
                      , DataForecast
