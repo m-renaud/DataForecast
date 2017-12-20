@@ -11,5 +11,5 @@ requirements.
 
 For more information see [Tutorial.lhs](src/DataForecast/Tutorial.lhs).
 
-Library documentation can be found at http://mrenaud.ca/DataForecast/haddock/.
+Library documentation can be found at http://www.m-renaud.com/DataForecast/haddock/.
 
